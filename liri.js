@@ -10,7 +10,7 @@ var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 var nodeArg = process.argv[2];
 
-var myTweets = function() {
+var getMyTweets = function() {
   var params = { screen_name: client.consumer_key };
   client.get("statuses/user_timeline", params, function(
     error,
@@ -20,13 +20,24 @@ var myTweets = function() {
     print20Tweets(error, tweets, response);
   });
 };
-var spotifyThisSong = function() {};
+var spotifyThisSong = function() {
+  var title = process.argv.splice(3).join(" ");
+  spotify.search({ type: 'track', query:title}, function(err, data) {
+    var song=data.tracks.items[0].album;
+    if (err) {
+      return console.log('Error occurred: ' + err);
+    }
+    console.log("\n"+song.artists[0].name+"\n"+song.preview_url+"\n"+song.name+"\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n");
+
+  })
+};
+
 var movieThis = function() {};
 var doWhatItSays = function() {};
 
 switch (nodeArg) {
   case "my-tweets":
-    myTweets();
+    getMyTweets();
     break;
   case "spotify-this-song":
     spotifyThisSong();
