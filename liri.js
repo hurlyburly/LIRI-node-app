@@ -1,11 +1,12 @@
-//linking all the necessary packages in order to run the program
+//linking all the necessary npm packages in order to run the program
 require("dotenv").config();
 var keys = require("./keys");
 var request = require("request");
 var Twitter = require("twitter");
 var Spotify = require("node-spotify-api");
-var fs = require("fs");
+var fs = require("fs"); 
 
+//
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 var nodeArg = process.argv[2];
@@ -23,14 +24,12 @@ var getSpotifySong = function() {
 };
 
 var getMovie = function() {
-
 };
-var getRandomCommand = function() {
 
+var getRandomCommand = function() {
 };
 
 //List of Functions passed as callbacks in the get functions for each node command in process.argv[2]. These will print the necessary information to the console as well as call the appendLog function once information is received. 
-
 function printSpotifySong(err, data) {
   var song = data.tracks.items[0];
   if (err) {
@@ -50,7 +49,7 @@ function printSpotifySong(err, data) {
 
 function printTweets(error, tweets, response, tweetLimit) {
   if (error) {
-    return console.log("Error occurred: " + err);
+    return console.log("Error occurred: " + error);
   }
   if (!error) {
     tweetLimit = 20;
@@ -66,7 +65,6 @@ function printTweets(error, tweets, response, tweetLimit) {
     }
   }
 }
-
 
 // This will append the information pulled from the API call to the log.txt file
 function appendLog(print) {
