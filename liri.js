@@ -4,32 +4,34 @@ var keys = require("./keys");
 var request = require("request");
 var Twitter = require("twitter");
 var Spotify = require("node-spotify-api");
-var fs = require("fs"); 
+var fs = require("fs");
 
-//
+//Initializing Spotify and Twitter
 var spotify = new Spotify(keys.spotify);
-var client = new Twitter(keys.twitter);
+var twitter = new Twitter(keys.twitter);
 var nodeArg = process.argv[2];
-
+var title = process.argv.splice(3).join(" ").replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
 //List of functions for each node commang in process.argv[2] that grab the necessary info from the Twitter, Spotify and OMDB APIs passing callbacks to the print functions related to each get function
 var getMyTweets = function() {
-  var params = { screen_name: client.consumer_key };
-  client.get("statuses/user_timeline", params, printTweets);
+  var params = { screen_name: twitter.consumer_key };
+  twitter.get("statuses/user_timeline", params, printTweets);
 };
 
 var getSpotifySong = function() {
-  //setting search param : title to a single string by taking each argument after nodeArg and joinng them 
-  var title = process.argv.splice(3).join(" ");
+  //setting search param : title to a single string by taking each argument after nodeArg and joinng them
   spotify.search({ type: "track", query: title }, printSpotifySong);
 };
 
 var getMovie = function() {
+  var url =
+    "https://www.omdbapi.com/?t=" + title + "&y=&plot=full&apikey=trilogy";
+  request(url, printMovie);
 };
 
-var getRandomCommand = function() {
-};
+var getRandomCommand = function() {};
 
-//List of Functions passed as callbacks in the get functions for each node command in process.argv[2]. These will print the necessary information to the console as well as call the appendLog function once information is received. 
+//List of Functions passed as callbacks in the get functions for each node command in process.argv[2]. These will print the necessary information to the console as well as call the appendLog function once information is received.
+
 function printSpotifySong(err, data) {
   var song = data.tracks.items[0];
   if (err) {
@@ -66,6 +68,39 @@ function printTweets(error, tweets, response, tweetLimit) {
   }
 }
 
+function printMovie(error, response, body) {
+  if (error) {
+    return console.log("Error occurred:" + error);
+  }
+
+  var movieObject = JSON.parse(body);
+  var movieDetails =
+    "\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n" +
+    "Title: "+
+    movieObject.Title +
+    "\n" +
+    "Year: "+
+    movieObject.Year +
+    "\n" +
+    "imdb Rating: " +
+    movieObject.imdbRating +
+    "\n" +
+    "Rotten Tomatoes: "+
+    movieObject.Ratings[1].Value +
+    "\n"+
+    "Country: "+
+    movieObject.Country+
+    "\n"+
+    "Plot: "+
+    movieObject.Plot+
+    "\n"+
+    "Actors: "+
+    movieObject.Actors+
+    "\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n";
+  console.log(movieDetails);
+  appendLog(movieDetails);
+}
+
 // This will append the information pulled from the API call to the log.txt file
 function appendLog(print) {
   fs.appendFile("log.txt", print, function(err) {
@@ -82,7 +117,7 @@ switch (nodeArg) {
     getSpotifySong();
     break;
   case "movie-this":
-    movieThis();
+    getMovie();
     break;
   case "do-what-it-says":
     doWhatItSays();
