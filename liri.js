@@ -26,18 +26,25 @@ var getMyTweets = function() {
 };
 
 var getSpotifySong = function() {
-  // if(title=" "){
-  //   spotify.search({ type: "track", query: "The Sign Ace of Base" }, printSpotifySong);
-  // }
-  //else{
+  if(title){
   spotify.search({ type: "track", query: title }, printSpotifySong);
-  //}
+  } else{
+        spotify.search({ type: "track", query: "The Sign Ace of Base" }, printSpotifySong);
+  }
 };
 
 var getMovie = function() {
+  if(title){
   var url =
     "https://www.omdbapi.com/?t=" + title + "&y=&plot=full&apikey=trilogy";
   request(url, printMovie);
+  }
+  else{ 
+
+  var url="https://www.omdbapi.com/?t=Mr.+Nobody&y=&plot=full&apikey=trilogy";
+  request(url, printMovie);
+
+  }
 };
 
 var getRandomCommand = function() {
@@ -69,11 +76,11 @@ function printSpotifySong(err, data) {
     return console.log("Error occurred: " + err);
   }
   var songInfo =
-    "\n" +
+    "\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n" +
     "Artist: " +
     song.album.artists[0].name +
     "\n" +
-    "Preview URL " +
+    "Preview URL: " +
     song.preview_url +
     "\n" +
     "Album: "+
