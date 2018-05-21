@@ -20,11 +20,18 @@ var title = process.argv
 //List of functions for each node command in process.argv[2] that grabs the necessary info from the Twitter, Spotify and OMDB APIs passing callbacks to the print functions related to each get...() function
 var getMyTweets = function() {
   var params = { screen_name: twitter.consumer_key };
-  twitter.get("statuses/user_timeline", params, printTweets);
+  twitter.get("statuses/user_timeline",params,printTweets);
+  // looking into setting up get functions with promises rather than as callbacks. Will implement this after checking with TA.
+  //return twitter.get("statuses/user_timeline", params);
 };
 
 var getSpotifySong = function() {
+  // if(title=" "){
+  //   spotify.search({ type: "track", query: "The Sign Ace of Base" }, printSpotifySong);
+  // }
+  //else{
   spotify.search({ type: "track", query: title }, printSpotifySong);
+  //}
 };
 
 var getMovie = function() {
@@ -113,7 +120,7 @@ function printMovie(error, response, body) {
     movieObject.imdbRating +
     "\n" +
     "Rotten Tomatoes: " +
-    movieObject.Ratings[1].Value +
+    // movieObject.Ratings[1].Value +
     "\n" +
     "Country: " +
     movieObject.Country +
