@@ -18,11 +18,10 @@ var title = process.argv
   .replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "");
 
 //List of functions for each node command in process.argv[2] that grabs the necessary info from the Twitter, Spotify and OMDB APIs passing callbacks to the print functions related to each get...() function
+//================================================================================
 var getMyTweets = function() {
   var params = { screen_name: twitter.consumer_key };
   twitter.get("statuses/user_timeline",params,printTweets);
-  // looking into setting up get functions with promises rather than as callbacks. Will implement this after checking with TA.
-  //return twitter.get("statuses/user_timeline", params);
 };
 
 var getSpotifySong = function() {
@@ -40,25 +39,24 @@ var getMovie = function() {
   request(url, printMovie);
   }
   else{ 
-
   var url="https://www.omdbapi.com/?t=Mr.+Nobody&y=&plot=full&apikey=trilogy";
   request(url, printMovie);
-
   }
 };
 
 var getRandomCommand = function() {
-  fs.readFile("random.txt","UTF-8", function(err, data) {
-    setRandomCommand(data, err);
+  fs.readFile("random.txt","UTF-8", function(error, data) {
+    setRandomCommand(error,data);
     //calling switch case logic function inside of getRandomCommand function in order to execute the command listed in the random.txt file
     nodeCommandLogic();
+    //look into readFileSync
   });
 };
 
-function setRandomCommand(data, err) {
+function setRandomCommand(error, data) {
   var command = data.split(",");
-  if (err)
-    throw err;
+  if (error)
+    throw error;
   nodeArg = command[0];
   if (command.length > 1) {
     title = command[1].replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "");
@@ -70,10 +68,10 @@ function setRandomCommand(data, err) {
 
 //List of Functions passed as callbacks in the get functions for each node command in process.argv[2]. These will print the necessary information to the console as well as call the appendLog function once information is received.
 
-function printSpotifySong(err, data) {
+function printSpotifySong(error, data) {
   var song = data.tracks.items[0];
-  if (err) {
-    return console.log("Error occurred: " + err);
+  if (error) {
+    return console.log("Error occurred: " + error);
   }
   var songInfo =
     "\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n" +
@@ -113,7 +111,6 @@ function printMovie(error, response, body) {
   if (error) {
     return console.log("Error occurred:" + error);
   }
-
   var movieObject = JSON.parse(body);
   var movieDetails =
     "\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n" +
@@ -144,8 +141,8 @@ function printMovie(error, response, body) {
 
 // This will append the information pulled from the API call to the log.txt file
 function appendLog(print) {
-  fs.appendFile("log.txt", print, function(err) {
-    if (err) throw err;
+  fs.appendFile("log.txt", print, function(error) {
+    if (error) throw error;
   });
 }
 
